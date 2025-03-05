@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if task %}Edit Task{% else %}Create Task{% endif %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Minecraft';
+            src: url('https://db.onlinewebfonts.com/t/6ab539c6fc2b21ff0b149b3d06d7f97c.woff2') format('woff2');
+        }
+        
+        body {
+            font-family: 'Minecraft', 'VT323', monospace;
+            background-color: #5c4033;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEVHcEw4NDM4NDM4NDM4NDM4NDM4NDM4NDOEPMxYAAAAB3RSTlMAGwQIEQMTJ9YzTQAAAGhJREFUOMtjYGBgEDJgQAKCDLiANAMuoABVIwlVwwjVgEsNBzSgzYAL4HQHLoDTfbgATjVYnQYKGOAmMxADKFeDN5BOtpEtKAp0EIGI1KAogHo5jIGBBRzQwALqWbhfhBkYcIUJAwoAABzBEqABpM8TAAAAAElFTkSuQmCC');
+        }
+
+        .navbar {
+            background-color: #4a3c2e !important;
+            border-bottom: 4px solid #2e2516;
+        }
+
+        .card {
+            background-color: #8b7355;
+            border: 4px solid #4a3c2e;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background-color: #5b8731;
+            border: 2px solid #4a722a;
+            font-family: 'Minecraft', 'VT323', monospace;
+            text-transform: uppercase;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: #7bab4e;
+            border-color: #5b8731;
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+
+        .btn-outline-secondary {
+            color: #c6b088;
+            border-color: #c6b088;
+            font-family: 'Minecraft', 'VT323', monospace;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #c6b088;
+            color: #4a3c2e;
+        }
+
+        .form-control, .form-select {
+            background-color: #c6b088;
+            border: 2px solid #4a3c2e;
+            color: #2e2516;
+            font-family: 'Minecraft', 'VT323', monospace;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #d4c4a8;
+            border-color: #5b8731;
+            box-shadow: 0 0 0 0.25rem rgba(91, 135, 49, 0.25);
+        }
+
+        .form-label {
+            color: #ffffff;
+            font-family: 'Minecraft', 'VT323', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .navbar-brand, h2 {
+            font-family: 'Minecraft', 'VT323', monospace;
+            color: #ffffff;
+        }
+
+        .card-title {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px #2e2516;
+        }
+
+        select option {
+            background-color: #c6b088;
+            color: #2e2516;
+            font-family: 'Minecraft', 'VT323', monospace;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark mb-4">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">Task Manager</span>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">{% if task %}Edit Task{% else %}Create Task{% endif %}</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="title" class="form-control" value="{{ task.title|default:'' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="3">{{ task.description|default:'' }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Due Date</label>
+                        <input type="date" name="due_date" class="form-control" value="{{ task.due_date|date:'Y-m-d'|default:'' }}" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="Pending" {% if task.status == 'Pending' %}selected{% endif %}>Pending</option>
+                            <option value="Overdue" {% if task.status == 'Overdue' %}selected{% endif %}>Overdue</option>
+                            <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
+                        </select>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <a href="{% url 'task_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

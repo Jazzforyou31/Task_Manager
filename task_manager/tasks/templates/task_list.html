@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Minecraft';
+            src: url('https://db.onlinewebfonts.com/t/6ab539c6fc2b21ff0b149b3d06d7f97c.woff2') format('woff2');
+        }
+        
+        body {
+            font-family: 'Minecraft', 'VT323', monospace;
+            background-color: #5c4033;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEVHcEw4NDM4NDM4NDM4NDM4NDM4NDM4NDOEPMxYAAAAB3RSTlMAGwQIEQMTJ9YzTQAAAGhJREFUOMtjYGBgEDJgQAKCDLiANAMuoABVIwlVwwjVgEsNBzSgzYAL4HQHLoDTfbgATjVYnQYKGOAmMxADKFeDN5BOtpEtKAp0EIGI1KAogHo5jIGBBRzQwALqWbhfhBkYcIUJAwoAABzBEqABpM8TAAAAAElFTkSuQmCC');
+        }
+
+        .navbar {
+            background-color: #4a3c2e !important;
+            border-bottom: 4px solid #2e2516;
+        }
+
+        .card {
+            background-color: #8b7355;
+            border: 4px solid #4a3c2e;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background-color: #5b8731;
+            border: 2px solid #4a722a;
+            font-family: 'Minecraft', 'VT323', monospace;
+            text-transform: uppercase;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: #7bab4e;
+            border-color: #5b8731;
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+
+        .table {
+            background-color: #c6b088;
+            border: 2px solid #4a3c2e;
+        }
+
+        .table thead th {
+            background-color: #8b7355;
+            color: #ffffff;
+            border-bottom: 2px solid #4a3c2e;
+        }
+
+        .badge {
+            font-family: 'Minecraft', 'VT323', monospace;
+            padding: 8px;
+            border-radius: 0 !important; 
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+            border: 2px solid rgba(0,0,0,0.3);
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+       
+        .bg-success {
+            background-color: #5b8731 !important; 
+            border-color: #4a722a !important;
+        }
+
+        .bg-danger {
+            background-color: #8B0000 !important; 
+            border-color: #660000 !important;
+        }
+
+        .bg-warning {
+            background-color: #DAA520 !important; 
+            border-color: #B8860B !important;
+        }
+
+        .form-control {
+            background-color: #c6b088;
+            border: 2px solid #4a3c2e;
+            color: #2e2516;
+            font-family: 'Minecraft', 'VT323', monospace;
+        }
+
+        .navbar-brand, h2, th, td {
+            font-family: 'Minecraft', 'VT323', monospace;
+            color: #ffffff;
+        }
+
+        .btn-outline-primary {
+            color: #5b8731;
+            border-color: #5b8731;
+            font-family: 'Minecraft', 'VT323', monospace;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #5b8731;
+            border-color: #4a722a;
+        }
+
+        .btn-group .btn {
+            font-family: 'Minecraft', 'VT323', monospace;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark mb-4">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">Task Manager</span>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="card-title">Tasks</h2>
+                    <a href="{% url 'task_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create New Task
+                    </a>
+                </div>
+                
+                <div class="mb-4">
+                    <form method="GET" class="d-flex gap-2">
+                        <input type="text" name="search" class="form-control" placeholder="Search tasks..." value="{{ request.GET.search }}">
+                        <button type="submit" class="btn btn-outline-primary">Search</button>
+                    </form>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in tasks %}
+                            <tr>
+                                <td class="align-middle">{{ task.title }}</td>
+                                <td class="align-middle">{{ task.description|truncatewords:30 }}</td>
+                                <td class="align-middle">{{ task.due_date }}</td>
+                                <td class="align-middle">
+                                    <span class="badge {% if task.status == 'Completed' %}bg-success{% elif task.status == 'Overdue' %}bg-danger{% else %}bg-warning{% endif %}">
+                                        {{ task.status }}
+                                    </span>
+                                </td>
+                                <td class="align-middle">
+                                    <div class="btn-group">
+                                        <a href="{% url 'task_update' task.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <a href="{% url 'task_delete' task.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4">No tasks found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</body>
+</html>
